@@ -185,7 +185,12 @@ NSString *MPFlipViewControllerDidFinishAnimatingNotification = @"com.markpospese
 		[self startFlipToViewController:viewController 
 					 fromViewController:previousController 
 						  withDirection:(isForward? MPFlipStyleDefault : MPFlipStyleDirectionBackward)];
-		
+
+        if ([[self delegate] respondsToSelector:@selector(flipViewController:willStartFlipping:)])
+        {
+            [[self delegate] flipViewController:self willStartFlipping:previousController];
+        }
+
 		[self.flipTransition perform:^(BOOL finished) {
 			[self endFlipAnimation:finished transitionCompleted:YES completion:completion];
 		}];
@@ -270,8 +275,12 @@ NSString *MPFlipViewControllerDidFinishAnimatingNotification = @"com.markpospese
 		[self setPanning:YES];
 		[self setPanStart:currentPosition];
 		[self setLastPanPosition:currentPosition];
+        if ([[self delegate] respondsToSelector:@selector(flipViewController:willStartFlipping:)])
+        {
+            [[self delegate] flipViewController:self willStartFlipping:self.viewController];
+        }
 	}
-	
+
 	if ([self isPanning] && state == UIGestureRecognizerStateChanged)
 	{
 		CGFloat progress = [self progressFromPosition:currentPosition];

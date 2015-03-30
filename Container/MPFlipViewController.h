@@ -61,6 +61,8 @@ typedef NSInteger MPFlipViewControllerDirection; // For 'MPFlipViewControllerOri
 // called when MPFlipViewController handles willRotateToInterfaceOrientation:duration: callback
 - (MPFlipViewControllerOrientation)flipViewController:(MPFlipViewController *)flipViewController orientationForInterfaceOrientation:(UIInterfaceOrientation)orientation;
 
+- (void)flipViewController:(MPFlipViewController *)flipViewController willStartFlipping:(UIViewController *)sourceController;
+
 @end
 
 @protocol MPFlipViewControllerDataSource 
