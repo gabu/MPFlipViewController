@@ -38,6 +38,7 @@ typedef NSInteger MPFlipViewControllerDirection; // For 'MPFlipViewControllerOri
 @property (nonatomic, readonly) NSArray *gestureRecognizers;
 @property (nonatomic, assign) id <MPFlipViewControllerDelegate> delegate;
 @property (nonatomic, assign) id <MPFlipViewControllerDataSource> dataSource; // If nil, user gesture-driven navigation will be disabled.
+@property (nonatomic, assign) NSUInteger marginAtTapOrPanArea;
 
 // designated initializer
 - (id)initWithOrientation:(MPFlipViewControllerOrientation)orientation;

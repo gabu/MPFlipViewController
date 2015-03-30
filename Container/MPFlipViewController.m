@@ -9,7 +9,6 @@
 #import "MPFlipViewController.h"
 #import	"MPFlipTransition.h"
 
-#define MARGIN	44
 #define SWIPE_THRESHOLD	125.0f
 #define SWIPE_ESCAPE_VELOCITY 650.0f
 
@@ -40,6 +39,7 @@ NSString *MPFlipViewControllerDidFinishAnimatingNotification = @"com.markpospese
 
 @synthesize delegate = _delegate;
 @synthesize dataSource = _dataSource;
+@synthesize marginAtTapOrPanArea = _marginAtTapOrPanArea;
 
 @synthesize orientation = _orientation;
 @synthesize childViewController = _childViewController;
@@ -61,6 +61,7 @@ NSString *MPFlipViewControllerDidFinishAnimatingNotification = @"com.markpospese
     self = [super init];
     if (self) {
         // Custom initialization
+        _marginAtTapOrPanArea = 44;
 		_orientation = orientation;
 		_direction = MPFlipViewControllerDirectionForward;
 		_gesturesAdded = NO;
@@ -206,9 +207,9 @@ NSString *MPFlipViewControllerDidFinishAnimatingNotification = @"com.markpospese
 	CGFloat value = isHorizontal? tapPoint.x : tapPoint.y;
 	CGFloat dimension = isHorizontal? self.view.bounds.size.width : self.view.bounds.size.height;
 	NSLog(@"Tap to flip");
-	if (value <= MARGIN)
+	if (value <= self.marginAtTapOrPanArea)
 		[self gotoPreviousPage];
-	else if (value >= dimension - MARGIN)
+	else if (value >= dimension - self.marginAtTapOrPanArea)
 		[self gotoNextPage];
 }
 
@@ -244,12 +245,12 @@ NSString *MPFlipViewControllerDidFinishAnimatingNotification = @"com.markpospese
 		BOOL isHorizontal = [self orientation] == MPFlipViewControllerOrientationHorizontal;
 		CGFloat value = isHorizontal? currentPosition.x : currentPosition.y;
 		CGFloat dimension = isHorizontal? self.view.bounds.size.width : self.view.bounds.size.height;
-		if (value <= MARGIN)
+		if (value <= self.marginAtTapOrPanArea)
 		{
 			if (![self startFlipWithDirection:MPFlipViewControllerDirectionReverse])
 				return;
 		}
-		else if (value >= dimension - MARGIN)
+		else if (value >= dimension - self.marginAtTapOrPanArea)
 		{
 			if (![self startFlipWithDirection:MPFlipViewControllerDirectionForward])
 				return;
@@ -346,7 +347,7 @@ NSString *MPFlipViewControllerDidFinishAnimatingNotification = @"com.markpospese
 		BOOL isHorizontal = [self orientation] == MPFlipViewControllerOrientationHorizontal;
 		CGFloat value = isHorizontal? tapPoint.x : tapPoint.y;
 		CGFloat dimension = isHorizontal? self.view.bounds.size.width : self.view.bounds.size.height;
-		return (value <= MARGIN || value >= dimension - MARGIN);
+		return (value <= self.marginAtTapOrPanArea || value >= dimension - self.marginAtTapOrPanArea);
 	}
 	
 	return YES;
