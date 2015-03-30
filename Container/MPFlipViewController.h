@@ -39,6 +39,9 @@ typedef NSInteger MPFlipViewControllerDirection; // For 'MPFlipViewControllerOri
 @property (nonatomic, assign) id <MPFlipViewControllerDelegate> delegate;
 @property (nonatomic, assign) id <MPFlipViewControllerDataSource> dataSource; // If nil, user gesture-driven navigation will be disabled.
 @property (nonatomic, assign) NSUInteger marginAtTapOrPanArea;
+@property (nonatomic, assign) CGFloat coveredPageShadowOpacity;
+@property (nonatomic, assign) CGFloat flippingPageShadowOpacity;
+@property (nonatomic, assign) BOOL shouldRenderAllViews;
 
 // designated initializer
 - (id)initWithOrientation:(MPFlipViewControllerOrientation)orientation;

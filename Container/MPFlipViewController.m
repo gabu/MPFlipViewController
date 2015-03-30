@@ -40,6 +40,9 @@ NSString *MPFlipViewControllerDidFinishAnimatingNotification = @"com.markpospese
 @synthesize delegate = _delegate;
 @synthesize dataSource = _dataSource;
 @synthesize marginAtTapOrPanArea = _marginAtTapOrPanArea;
+@synthesize coveredPageShadowOpacity = _coveredPageShadowOpacity;
+@synthesize flippingPageShadowOpacity = _flippingPageShadowOpacity;
+@synthesize shouldRenderAllViews = _shouldRenderAllViews;
 
 @synthesize orientation = _orientation;
 @synthesize childViewController = _childViewController;
@@ -62,6 +65,9 @@ NSString *MPFlipViewControllerDidFinishAnimatingNotification = @"com.markpospese
     if (self) {
         // Custom initialization
         _marginAtTapOrPanArea = 44;
+        _coveredPageShadowOpacity = 1./3;
+        _flippingPageShadowOpacity = 0.1;
+        _shouldRenderAllViews = YES;
 		_orientation = orientation;
 		_direction = MPFlipViewControllerDirectionForward;
 		_gesturesAdded = NO;
@@ -460,7 +466,9 @@ NSString *MPFlipViewControllerDidFinishAnimatingNotification = @"com.markpospese
 															  duration:0.5 
 																 style:((isForward? MPFlipStyleDefault : MPFlipStyleDirectionBackward) | (isVertical? MPFlipStyleOrientationVertical : MPFlipStyleDefault))
 													  completionAction:MPTransitionActionAddRemove];
-	
+    self.flipTransition.coveredPageShadowOpacity = self.coveredPageShadowOpacity;
+    self.flipTransition.flippingPageShadowOpacity = self.flippingPageShadowOpacity;
+    self.flipTransition.shouldRenderAllViews = self.shouldRenderAllViews;
 	[self.flipTransition buildLayers];
 	
 	// set the back page in the vertical position (midpoint of animation)
