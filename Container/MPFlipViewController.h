@@ -29,6 +29,13 @@ enum {
 };
 typedef NSInteger MPFlipViewControllerDirection; // For 'MPFlipViewControllerOrientationHorizontal', 'forward' is right-to-left, like pages in a book. For 'MPFlipViewControllerOrientationVertical', bottom-to-top, like pages in a wall calendar.
 
+enum {
+    MPFlipViewControllerGestureTypeTap,
+    MPFlipViewControllerGestureTypeSwipe,
+    MPFlipViewControllerGestureTypePan
+};
+typedef NSInteger MPFlipViewControllerGestureType;
+
 @protocol MPFlipViewControllerDelegate, MPFlipViewControllerDataSource;
 
 @interface MPFlipViewController : UIViewController<UIGestureRecognizerDelegate>
@@ -61,7 +68,9 @@ typedef NSInteger MPFlipViewControllerDirection; // For 'MPFlipViewControllerOri
 // called when MPFlipViewController handles willRotateToInterfaceOrientation:duration: callback
 - (MPFlipViewControllerOrientation)flipViewController:(MPFlipViewController *)flipViewController orientationForInterfaceOrientation:(UIInterfaceOrientation)orientation;
 
-- (void)flipViewController:(MPFlipViewController *)flipViewController willStartFlipping:(UIViewController *)sourceController;
+- (void)flipViewController:(MPFlipViewController *)flipViewController willStartFlipping:(UIViewController *)sourceController gestureType:(MPFlipViewControllerGestureType)gestureType;
+
+- (void)flipViewController:(MPFlipViewController *)flipViewController panningProgress:(CGFloat)panningProgress direction:(MPFlipViewControllerDirection)direction;
 
 @end
 

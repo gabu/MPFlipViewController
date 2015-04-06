@@ -32,6 +32,7 @@ NSString *MPFlipViewControllerDidFinishAnimatingNotification = @"com.markpospese
 @property (assign, nonatomic) CGPoint lastPanPosition;
 @property (assign, nonatomic) BOOL animationDidStartAsPan;
 @property (nonatomic, assign) MPFlipViewControllerDirection direction;
+@property (nonatomic, assign) MPFlipViewControllerGestureType gestureType;
 
 @end
 
@@ -56,6 +57,7 @@ NSString *MPFlipViewControllerDidFinishAnimatingNotification = @"com.markpospese
 @synthesize lastPanPosition = _lastPanPosition;
 @synthesize animationDidStartAsPan = _animationDidStartAsPan;
 @synthesize direction = _direction;
+@synthesize gestureType = _gestureType;
 @synthesize sourceController = _sourceController;
 @synthesize destinationController = _destinationController;
 
@@ -186,10 +188,8 @@ NSString *MPFlipViewControllerDidFinishAnimatingNotification = @"com.markpospese
 					 fromViewController:previousController 
 						  withDirection:(isForward? MPFlipStyleDefault : MPFlipStyleDirectionBackward)];
 
-        if ([[self delegate] respondsToSelector:@selector(flipViewController:willStartFlipping:)])
-        {
-            [[self delegate] flipViewController:self willStartFlipping:previousController];
-        }
+        if ([[self delegate] respondsToSelector:@selector(flipViewController:willStartFlipping:gestureType:)])
+            [[self delegate] flipViewController:self willStartFlipping:previousController gestureType:self.gestureType];
 
 		[self.flipTransition perform:^(BOOL finished) {
 			[self endFlipAnimation:finished transitionCompleted:YES completion:completion];
@@ -218,6 +218,7 @@ NSString *MPFlipViewControllerDidFinishAnimatingNotification = @"com.markpospese
 	CGFloat value = isHorizontal? tapPoint.x : tapPoint.y;
 	CGFloat dimension = isHorizontal? self.view.bounds.size.width : self.view.bounds.size.height;
 	NSLog(@"Tap to flip");
+    self.gestureType = MPFlipViewControllerGestureTypeTap;
 	if (value <= self.marginAtTapOrPanArea)
 		[self gotoPreviousPage];
 	else if (value >= dimension - self.marginAtTapOrPanArea)
@@ -229,7 +230,8 @@ NSString *MPFlipViewControllerDidFinishAnimatingNotification = @"com.markpospese
 	if ([self isAnimating])
 		return;
 	
-	NSLog(@"Swipe to previous page");
+    NSLog(@"Swipe to previous page");
+    self.gestureType = MPFlipViewControllerGestureTypeSwipe;
 	[self gotoPreviousPage];
 }
 
@@ -238,7 +240,8 @@ NSString *MPFlipViewControllerDidFinishAnimatingNotification = @"com.markpospese
 	if ([self isAnimating])
 		return;
 	
-	NSLog(@"Swipe to next page");
+    NSLog(@"Swipe to next page");
+    self.gestureType = MPFlipViewControllerGestureTypeSwipe;
 	[self gotoNextPage];
 }
 
@@ -275,10 +278,8 @@ NSString *MPFlipViewControllerDidFinishAnimatingNotification = @"com.markpospese
 		[self setPanning:YES];
 		[self setPanStart:currentPosition];
 		[self setLastPanPosition:currentPosition];
-        if ([[self delegate] respondsToSelector:@selector(flipViewController:willStartFlipping:)])
-        {
-            [[self delegate] flipViewController:self willStartFlipping:self.viewController];
-        }
+        if ([[self delegate] respondsToSelector:@selector(flipViewController:willStartFlipping:gestureType:)])
+            [[self delegate] flipViewController:self willStartFlipping:self.viewController gestureType:MPFlipViewControllerGestureTypePan];
 	}
 
 	if ([self isPanning] && state == UIGestureRecognizerStateChanged)
@@ -301,13 +302,23 @@ NSString *MPFlipViewControllerDidFinishAnimatingNotification = @"com.markpospese
 			
 			// finish the remaining animation, but from the last touch position
 			[self finishPan:shouldFallBack];
+            
+            if ([[self delegate] respondsToSelector:@selector(flipViewController:willStartFlipping:gestureType:)])
+                [[self delegate] flipViewController:self willStartFlipping:self.viewController gestureType:MPFlipViewControllerGestureTypeSwipe];
 		}
 		else
 		{
-			if (progress < 1)
+            if (progress < 1) {
 				[self.flipTransition setStage:MPFlipAnimationStage1 progress:progress];
-			else
+                if ([[self delegate] respondsToSelector:@selector(flipViewController:panningProgress:direction:)]) {
+                    [[self delegate] flipViewController:self panningProgress:progress direction:self.direction];
+                }
+            } else {
 				[self.flipTransition setStage:MPFlipAnimationStage2 progress:progress - 1];
+                if ([[self delegate] respondsToSelector:@selector(flipViewController:panningProgress:direction:)]) {
+                    [[self delegate] flipViewController:self panningProgress:progress direction:self.direction];
+                }
+            }
 			[self setLastPanPosition:currentPosition];
 		}
 	}
